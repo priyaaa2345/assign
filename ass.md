@@ -202,6 +202,7 @@ order date, and any other necessary information.
 7. Write an SQL query to update the contact information (e.g., email and address) of a specific 
 customer in the "Customers" table. Allow users to input the customer ID and new contact 
 information.
+```
 declare @up int = 17;
 update customers
 set email = 'lolii@gmail.com',
@@ -439,7 +440,7 @@ max(totalamount) from orders) ;
 9. Write an SQL query to calculate the average order value (total revenue divided by the number of 
 orders) for all customers.
 ```
- -- everyone has only 1 orders so:::
+  everyone has only 1 orders so:::
 select avg(totalamount) from orders
 group by orderid;
 ```
@@ -452,4 +453,3 @@ select customerid as c from customers
 union
 select count(orderid) from orders group by orderid)
 ;
-```
