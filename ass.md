@@ -2,8 +2,10 @@
 
 # TASK 1 DATABASE DESIGN
 1. Create the database named "TechShop"
-
-
+```
+create database TechShop;
+use TechShop;
+```
 
 ![db](<Screenshot 2024-04-30 203600.png>)
 
@@ -447,9 +449,9 @@ group by orderid;
 10. Write an SQL query to find the total number of orders placed by each customer and list their 
 names along with the order count
 ```
-select firstname from Customers
-where customerid in(
-select customerid as c from customers
-union
-select count(orderid) from orders group by orderid)
-;
+select customers.CustomerId,count(orders.OrderID) as coo from customers 
+inner join orders on
+Customers.CustomerId=orders.CustomerId
+group by Customers.CustomerId
+order by Customers.CustomerId;
+```
