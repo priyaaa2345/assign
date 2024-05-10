@@ -26,12 +26,7 @@ print("Welcome to TECHSHOP 📲🎧⚡")
 # attributes.
 # • Implement the constructor for each class to initialize its attributes.
 # • Implement methods as specified
-class Customers:
-    def read_customers(self):
-        cursor.execute("select * from Customers")
-        for row in cursor:
-            print(row)
-
+class Customer:
     def __init__(self, CustomerId, FirstName, LastName, Email, Phone, Address):
         self.CustomerId = CustomerId
         self.FirstName = FirstName
@@ -40,31 +35,103 @@ class Customers:
         self.Phone = Phone
         self.Address = Address
 
-    def CalculateTotalOrders(self, CustomerId):
+
+def customer_menu():
+    customer_service = CustomerService()
+    while True:
+        print(
+            """
+                             
+                             1. Read customer details
+                             2.Calculate Total orders
+                             3. View specific customer 
+                             4. Update details
+                             5.Back to main menu
+                             """
+        )
+        choice = int(input("enter a choice: "))
+        if choice == 1:
+            customer_service.read_customers()
+        elif choice == 2:
+            CustomerId = int(input("enter the customerid to get total orders: "))
+            customer_service.CalculateTotalOrders(CustomerId)
+            # customer = Customer(CustomerId, None, None, None, None, None)
+            # total_orders = customer.CalculateTotalOrders()
+            print("the total order for the given customer is : ")
+        elif choice == 3:
+            FirstName = input("enter the name of the customer to display: ")
+            # cust = Customer(None, FirstName, None, None, None, None)
+            # cust = Customer(FirstName)
+            customer_service.GetCustomerDetails(FirstName)
+            # print(details)
+        elif choice == 4:
+            phone = int(input("enter the data u want to update: "))
+            CustomerId = int(input("enter their customer id: "))
+            updation = Customer(phone)
+            customer_service.UpdateCustomerInfo(updation, CustomerId)
+            # updation = Customer(custt, None, None, None, None, phone)
+            # updat = updation.UpdateCustomerInfo()
+            print("updated successfully")
+        elif choice == 5:
+            break
+
+
+def order_menu():
+    pass
+
+
+def order_detail_menu():
+    pass
+
+
+def product_menu():
+    pass
+
+
+def inventory_menu():
+    pass
+
+
+class CustomerService:
+    def read_customers(self):
+        cursor.execute("select * from Customers")
+        for row in cursor:
+            print(row)
+
+    def CalculateTotalOrders(self, total):
         cursor.execute(
             """
-                    select count(Customers.CustomerId) from Customers
+                    select count(Customers.CustomerId)  from Customers
                     inner join orders on
                     Customers.CustomerId=Orders.CustomerId
                     where Customers.CustomerId=?
                     group by Customers.CustomerId
                     """,
-            (CustomerId),
+            (total),
         )
+        # conn.commit()
+        return 0
+
+    def GetCustomerDetails(self, FirstName):
+        cursor.execute("select * from customers where FirstName like ? ", (FirstName))
         conn.commit()
 
-    def GetCustomerDetails():
-        pass
+    def UpdateCustomerInfo(self, updation, CustomerId):
+        cursor.execute(
+            "update Customers set Phone=? where CustomerId=?",
+            (updation.Phone, CustomerId),
+        )
 
-    def UpdateCustomerInfo():
-        pass
 
-
-# customers_instance = Customers(None, None, None, None, None, None)
+# customers_instance = Customer(
+#     Customer.CustomerId,
+#     Customer.FirstName,
+#     Customer.LastName,
+#     Customer.Email,
+#     Customer.Phone,
+#     Customer.Address,
+# )
 # customers_instance.read_customers()
-total = Customers(Customers.CustomerId)
-total_orders = total.CalculateTotalOrders(Customers.CustomerId)
-print("the total order for the given customer is : ", total_orders)
 
 
 class Products:
@@ -159,3 +226,31 @@ class Inventory:
 
     def ListAllProducts():
         pass
+
+
+if __name__ == "__main__":
+    while True:
+        print(
+            """
+                           
+                              1.Customer data
+                              2.Product data
+                              3.Orders data
+                              4. Order details 
+                              5.Inventory data
+                              6.Exit
+                              """
+        )
+        choice = int(input("enter your choice "))
+        if choice == 1:
+            customer_menu()
+        elif choice == 2:
+            product_menu()
+        elif choice == 3:
+            order_menu()
+        elif choice == 4:
+            order_detail_menu()
+        elif choice == 5:
+            inventory_menu()
+        elif choice == 6:
+            break
