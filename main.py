@@ -54,37 +54,74 @@ def customer_menu():
             customer_service.read_customers()
         elif choice == 2:
             CustomerId = int(input("enter the customerid to get total orders: "))
-            customer_service.CalculateTotalOrders(CustomerId)
+
+            total = customer_service.CalculateTotalOrders(CustomerId)
             # customer = Customer(CustomerId, None, None, None, None, None)
             # total_orders = customer.CalculateTotalOrders()
-            print("the total order for the given customer is : ")
+            print("the total order for the given customer is : ", total)
         elif choice == 3:
             FirstName = input("enter the name of the customer to display: ")
             # cust = Customer(None, FirstName, None, None, None, None)
             # cust = Customer(FirstName)
-            customer_service.GetCustomerDetails(FirstName)
-            # print(details)
+            details = customer_service.GetCustomerDetails(FirstName)
+            for detail in details:
+                print(detail)
+
         elif choice == 4:
-            phone = int(input("enter the data u want to update: "))
+            updation = int(input("enter the data u want to update: "))
             CustomerId = int(input("enter their customer id: "))
-            updation = Customer(phone)
             customer_service.UpdateCustomerInfo(updation, CustomerId)
             # updation = Customer(custt, None, None, None, None, phone)
             # updat = updation.UpdateCustomerInfo()
+
             print("updated successfully")
+
         elif choice == 5:
             break
 
 
-def order_menu():
-    pass
+def product_menu():
+    product_service = ProductService()
+    while True:
+        print(
+            """
+                1. Product details
+                2. Update product details
+                3. Check stock details
+                4. Back to main menu
+              """
+        )
+        choice = int(input("enter a choice"))
+        if choice == 1:
+            search_with_id = int(input("enter the product id to search: "))
+            descriptions = product_service.GetProductDetails(search_with_id)
+            for description in descriptions:
+                print(description)
+        elif choice == 2:
+            updated_price = int(input("enter the price to update: "))
+            updated_description = input("enter the description to update: ")
+            the_id = int(input("enter the product id that needs to be updated"))
+            product_service.UpdateProductInfo(
+                updated_price, updated_description, the_id
+            )
+
+            print("everything is updated successfully")
+        elif choice == 3:
+            stock_search_with_id = int(
+                input("enter the product id to check if it is stock: ")
+            )
+            stock = product_service.IsProductInStock(stock_search_with_id)
+            for i in stock:
+                print(i)
+        elif choice == 4:
+            break
 
 
 def order_detail_menu():
     pass
 
 
-def product_menu():
+def order_menu():
     pass
 
 
@@ -109,46 +146,63 @@ class CustomerService:
                     """,
             (total),
         )
+        result = cursor.fetchone()
+        return result[0] if result else 0
         # conn.commit()
-        return 0
 
     def GetCustomerDetails(self, FirstName):
         cursor.execute("select * from customers where FirstName like ? ", (FirstName))
-        conn.commit()
+        # conn.commit()
+        return cursor.fetchall()
 
     def UpdateCustomerInfo(self, updation, CustomerId):
         cursor.execute(
             "update Customers set Phone=? where CustomerId=?",
-            (updation.Phone, CustomerId),
+            (updation, CustomerId),
         )
+        conn.commit()
 
 
-# customers_instance = Customer(
-#     Customer.CustomerId,
-#     Customer.FirstName,
-#     Customer.LastName,
-#     Customer.Email,
-#     Customer.Phone,
-#     Customer.Address,
-# )
-# customers_instance.read_customers()
+class ProductService:
+    # def __init__(self, ProductID, ProductName, Description, Price):
+    #     self.ProductID = ProductID
+    #     self.ProductName = ProductName
+    #     self.Description = Description
+    #     self.Price = Price
 
+    def GetProductDetails(self, search_with_id):
+        cursor.execute(
+            """
+                        select * from Products
+                        where ProductID=?
+                       """,
+            (search_with_id),
+        )
+        return cursor.fetchall()
 
-class Products:
-    def __init__(self, ProductID, ProductName, Description, Price):
-        self.ProductID = ProductID
-        self.ProductName = ProductName
-        self.Description = Description
-        self.Price = Price
+    def UpdateProductInfo(self, updated_price, updated_description, the_id):
+        cursor.execute(
+            """                                   
+                            update Products
+                            set Price=?
+                            description=?
+                            where ProductID=?
+                            """,
+            (updated_price, updated_description, the_id),
+        )
+        conn.commit()
 
-    def GetProductDetails():
-        pass
-
-    def UpdateProductInfo():
-        pass
-
-    def IsProductInStock():
-        pass
+    def IsProductInStock(self, stock_search_with_id):
+        cursor.execute(
+            """                                        
+                        select * from products
+                        left join Inventory on
+                        Products.ProductID=Inventory.ProductID
+                        where QuantityInStock>0 and Inventory.ProductID=?
+                       """,
+            (stock_search_with_id),
+        )
+        conn.commit()
 
 
 class Orders:
