@@ -101,20 +101,16 @@ def product_menu():
             updated_price = int(input("enter the price to update: "))
             updated_description = input("enter the description to update: ")
             the_id = int(input("enter the product id that needs to be updated"))
-            new_one = product_service.UpdateProductInfo(
+            product_service.UpdateProductInfo(
                 updated_price, updated_description, the_id
             )
-            for i in new_one:
-                print(i)
-
             print("everything is updated successfully")
         elif choice == 3:
             stock_search_with_id = int(
                 input("enter the product id to check if it is stock: ")
             )
             stock = product_service.IsProductInStock(stock_search_with_id)
-            for i in stock:
-                print(i)
+            print(" ", stock)
         elif choice == 4:
             break
 
@@ -143,7 +139,7 @@ def order_menu():
             get_details = int(input("enter cust id to get total details: "))
             getu = order_service.GetOrderDetails(get_details)
             print("the total order details is: ", getu)
-        elif choice == 3:
+        elif choice == 3:  # error
             status = input(
                 "enter the status that you want to update(Processing/Shipped): "
             )
@@ -151,7 +147,7 @@ def order_menu():
             order_service.UpdateOrderStatus(status, idu)
             print("updated successfully")
 
-        elif choice == 4:
+        elif choice == 4:  # no code
             pass
         elif choice == 5:
             break
@@ -224,6 +220,42 @@ def inventory_menu():
             prid = int(input("enter the product id to add the quantity: "))
             inventory_service.AddToInventory(quan, prid)
             print("Added successfuly..!")
+        elif choice == 4:
+            quant = int(input("enter a quantity to remove from inventory: "))
+            proid = int(input("enter the productid to remove quantity from: "))
+            inventory_service.RemoveFromInventory(quant, proid)
+            print("Removed successfully..")
+        elif choice == 5:
+            new_val = int(input("enter a new value to update: "))
+            pro_id = int(input("enter the product id: "))
+            inventory_service.UpdateStockQuantity(new_val, pro_id)
+            print("new value updated!!")
+        elif choice == 6:
+            proddid = int(input("enter the product id to check for availability: "))
+            is_avail = inventory_service.IsProductAvailable(proddid)
+            print(f"the product mentioned has {is_avail} quantity ")
+        elif choice == 7:
+            prod_id_invvalue = int(
+                input(
+                    "enter the product id to get the total value for the product in inventory: "
+                )
+            )
+            total_inv_value = inventory_service.GetInventoryValue(prod_id_invvalue)
+            print(
+                f"Total value of {prod_id_invvalue} in inventory is {total_inv_value} "
+            )
+        elif choice == 8:
+            low_stock = int(input("enter the quantity indicating low stock: "))
+            threshold_val = inventory_service.ListLowStockProducts(low_stock)
+            print("the products are: ", threshold_val)
+        elif choice == 9:
+            out_stock = inventory_service.ListOutOfStockProducts()
+            print("the products that are out of stock are: ", out_stock)
+        elif choice == 10:
+            all_products = inventory_service.ListAllProducts()
+            print("the inventory list are: ", all_products)
+        elif choice == 11:
+            break
 
 
 class CustomerService:
@@ -277,6 +309,7 @@ class ProductService:
         )
         return cursor.fetchall()
 
+    # error
     def UpdateProductInfo(self, updated_price, updated_description, the_id):
         cursor.execute(
             """                                   
@@ -288,7 +321,6 @@ class ProductService:
             (updated_price, updated_description, the_id),
         )
         conn.commit()
-        return cursor.fetchall()
 
     def IsProductInStock(self, stock_search_with_id):
         cursor.execute(
@@ -300,8 +332,7 @@ class ProductService:
                        """,
             (stock_search_with_id),
         )
-        # conn.commit()
-        # return cursor.fetchall()
+        return cursor.fetchall()
 
 
 class OrderService:
@@ -334,8 +365,7 @@ class OrderService:
                        """,
             (getu),
         )
-        result = cursor.fetchone()
-        return result[0] if result else 0
+        return cursor.fetchall()
 
     def UpdateOrderStatus(self, status, idu):
         cursor.execute(
@@ -345,7 +375,7 @@ class OrderService:
                         where OrderID=?;
                        """(
                 status, idu
-            ),
+            )
         )
         conn.commit()
 
@@ -383,8 +413,7 @@ class OrderDetailService:
                        """,
             (orduid),
         )
-        result = cursor.fetchone()
-        return result[0] if result else 0
+        return cursor.fetchall()
 
     def UpdateQuantity(self, quan, orddid):
         cursor.execute(
@@ -454,26 +483,78 @@ class InventoryService:
         )
         conn.commit()
 
-    def RemoveFromInventory():
-        pass
+    def RemoveFromInventory(self, quant, proid):
+        cursor.execute(
+            """
+                        update Inventory
+                        set QuantityInStock=QuantityInStock-?
+                        where ProductID=?
+                       """,
+            (quant, proid),
+        )
+        conn.commit()
 
-    def UpdateStockQuantity():
-        pass
+    def UpdateStockQuantity(self, new_val, pro_id):
+        cursor.execute(
+            """
+                        update Inventory
+                        set QuantityInStock=?
+                        where ProductID=?;
+                       """,
+            (new_val, pro_id),
+        )
+        conn.commit()
 
-    def IsProductAvailable():
-        pass
+    def IsProductAvailable(self, proddid):
+        cursor.execute(
+            """
+                        select quantityinstock from inventory
+                        where QuantityInStock>0 and ProductID=?;
+                       """,
+            (proddid),
+        )
+        result = cursor.fetchone()
+        return result[0] if result else 0
 
-    def GetInventoryValue():
-        pass
+    def GetInventoryValue(self, prod_id_invvalue):
+        cursor.execute(
+            """
+                        select price*quantityinstock from inventory
+                        inner join products on
+                        inventory.ProductID=Products.ProductID
+                        where inventory.ProductID=?;
+                       """,
+            (prod_id_invvalue),
+        )
+        result = cursor.fetchone()
+        return result[0] if result else 0
 
-    def ListLowStockProducts():
-        pass
+    def ListLowStockProducts(self, low_stock):
+        cursor.execute(
+            """
+                            select * from inventory
+                            where QuantityInStock<?;
+                       """,
+            (low_stock),
+        )
+        return cursor.fetchall()
 
-    def ListOutOfStockProducts():
-        pass
+    def ListOutOfStockProducts(self):
+        cursor.execute(
+            """                                         
+                        select * from inventory
+                        where QuantityInStock<0;
+                       """
+        )
+        return cursor.fetchall()
 
-    def ListAllProducts():
-        pass
+    def ListAllProducts(self):
+        cursor.execute(
+            """
+                       select productid,quantityinstock from Inventory;
+                       """
+        )
+        return cursor.fetchall()
 
 
 if __name__ == "__main__":
