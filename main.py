@@ -192,7 +192,38 @@ def order_detail_menu():
 
 
 def inventory_menu():
-    pass
+    inventory_service = InventoryService()
+    while True:
+        print(
+            """ 
+              1. Get product in inventory
+              2.Get quantity in stock
+              3. Add quantity 
+              4. Remove quantity
+              5. Update Stock quantity
+              6. Check for availability
+              7. Get total value 
+              8. Low stock product alert
+              9. Out of stock product
+              10. List all products
+              11. Back to main menu
+              
+              """
+        )
+        choice = int(input("enter a choice: "))
+        if choice == 1:
+            inv_id = int(input("enter the inventory id to get the product: "))
+            product = inventory_service.GetProduct(inv_id)
+            print("The product for the given id is: ", product)
+        elif choice == 2:
+            prod_id = int(input("enter the product id to know the quantity in stock: "))
+            pros = inventory_service.GetQuantityInStock(prod_id)
+            print("the quantity in stock is : ", pros)
+        elif choice == 3:
+            quan = int(input("enter the quantity to add to a product: "))
+            prid = int(input("enter the product id to add the quantity: "))
+            inventory_service.AddToInventory(quan, prid)
+            print("Added successfuly..!")
 
 
 class CustomerService:
@@ -288,7 +319,8 @@ class OrderService:
                        """,
             (to_cal_total),
         )
-        return cursor.fetchall()
+        result = cursor.fetchone()
+        return result[0] if result else 0
 
     def GetOrderDetails(self, getu):
         cursor.execute(
@@ -302,7 +334,8 @@ class OrderService:
                        """,
             (getu),
         )
-        return cursor.fetchall()
+        result = cursor.fetchone()
+        return result[0] if result else 0
 
     def UpdateOrderStatus(self, status, idu):
         cursor.execute(
@@ -337,7 +370,8 @@ class OrderDetailService:
                         """,
             (ordid),
         )
-        return cursor.fetchall()
+        result = cursor.fetchone()
+        return result[0] if result else 0
 
     def GetOrderDetailInfo(self, orduid):
         cursor.execute(
@@ -349,7 +383,8 @@ class OrderDetailService:
                        """,
             (orduid),
         )
-        return cursor.fetchall()
+        result = cursor.fetchone()
+        return result[0] if result else 0
 
     def UpdateQuantity(self, quan, orddid):
         cursor.execute(
@@ -372,24 +407,52 @@ class OrderDetailService:
                        """,
             (ordeid),
         )
-        return cursor.fetchall()
+        result = cursor.fetchone()
+        return result[0] if result else 0
 
 
-class Inventory:
-    def __init__(self, InventoryID, ProductID, QuantityInStock, LastStockUpdate):
-        self.InventoryID = InventoryID
-        self.ProductID = ProductID
-        self.QuantityInStock = QuantityInStock
-        self.LastStockUpdate = LastStockUpdate
+class InventoryService:
+    # def __init__(self, InventoryID, ProductID, QuantityInStock, LastStockUpdate):
+    #     self.InventoryID = InventoryID
+    #     self.ProductID = ProductID
+    #     self.QuantityInStock = QuantityInStock
+    #     self.LastStockUpdate = LastStockUpdate
 
-    def GetProduct():
-        pass
+    def GetProduct(self, inv_id):
+        cursor.execute(
+            """
+                    select productname from inventory
+                    inner join Products on
+                    Inventory.ProductID=Products.ProductID
+                    where InventoryId=?;
+                       """,
+            (inv_id),
+        )
+        result = cursor.fetchone()
+        return result[0] if result else 0
 
-    def GetQuantityInStock():
-        pass
+    def GetQuantityInStock(self, prod_id):
+        cursor.execute(
+            """
+                        select quantityinstock from Inventory
+                        where ProductID=?
+                       """,
+            (prod_id),
+        )
 
-    def AddToInventory():
-        pass
+        result = cursor.fetchone()
+        return result[0] if result else 0
+
+    def AddToInventory(self, quan, prid):
+        cursor.execute(
+            """
+                        update Inventory
+                        set quantityinstock = QuantityInStock+?
+                        where ProductID=?;
+                       """,
+            (quan, prid),
+        )
+        conn.commit()
 
     def RemoveFromInventory():
         pass
