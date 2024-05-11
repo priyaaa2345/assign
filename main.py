@@ -101,9 +101,11 @@ def product_menu():
             updated_price = int(input("enter the price to update: "))
             updated_description = input("enter the description to update: ")
             the_id = int(input("enter the product id that needs to be updated"))
-            product_service.UpdateProductInfo(
+            new_one = product_service.UpdateProductInfo(
                 updated_price, updated_description, the_id
             )
+            for i in new_one:
+                print(i)
 
             print("everything is updated successfully")
         elif choice == 3:
@@ -117,12 +119,76 @@ def product_menu():
             break
 
 
-def order_detail_menu():
-    pass
-
-
 def order_menu():
-    pass
+    order_service = OrderService()
+    while True:
+        print(
+            """
+                1. Total amount for order
+                2. Display order details
+                3. UPdate order status
+                4. Cancel order
+                5. Bacck to main menu
+
+              """
+        )
+        choice = int(input("enter a choice: "))
+        if choice == 1:
+            to_cal_total = int(
+                input("enter the customer id to calculate total amount: ")
+            )
+            totu = order_service.CalculateTotalAmount(to_cal_total)
+            print("the total amount for the given orderid is: ", totu)
+        elif choice == 2:
+            get_details = int(input("enter cust id to get total details: "))
+            getu = order_service.GetOrderDetails(get_details)
+            print("the total order details is: ", getu)
+        elif choice == 3:
+            status = input(
+                "enter the status that you want to update(Processing/Shipped): "
+            )
+            idu = int(input("enter the order id to do changes: "))
+            order_service.UpdateOrderStatus(status, idu)
+            print("updated successfully")
+
+        elif choice == 4:
+            pass
+        elif choice == 5:
+            break
+
+
+def order_detail_menu():
+    order_detail_service = OrderDetailService()
+    while True:
+        print(
+            """
+                1. Calculate subtotal
+                2. Get order detail information
+                3. update quantity
+                4. Adding discount
+                5. Back to main menu
+              """
+        )
+        choice = int(input("enter a choice: "))
+        if choice == 1:
+            ordid = int(input("enter the order id to calculate its subtotal: "))
+            subtotal = order_detail_service.CalculateSubtotal(ordid)
+            print("the amount is: ", subtotal)
+        elif choice == 2:
+            orduid = int(input("enter the order id to get the complte info: "))
+            detail = order_detail_service.GetOrderDetailInfo(orduid)
+            print("the details are: ", detail)
+        elif choice == 3:
+            quan = int(input("enter the quantity to update: "))
+            orddid = int(input("enter the ord detail id to update: "))
+            order_detail_service.UpdateQuantity(quan, orddid)
+            print("updated successfully!! ")
+        elif choice == 4:
+            ordeid = int(input("enter the orderdetailid to add discount: "))
+            disc_amt = order_detail_service.AddDiscount(ordeid)
+            print("the amt affter discount is : ", disc_amt)
+        elif choice == 5:
+            break
 
 
 def inventory_menu():
@@ -191,6 +257,7 @@ class ProductService:
             (updated_price, updated_description, the_id),
         )
         conn.commit()
+        return cursor.fetchall()
 
     def IsProductInStock(self, stock_search_with_id):
         cursor.execute(
@@ -202,46 +269,110 @@ class ProductService:
                        """,
             (stock_search_with_id),
         )
+        # conn.commit()
+        # return cursor.fetchall()
+
+
+class OrderService:
+    #     def __init__(self, OrderID, CustomerID, OrderDate, TotalAmount):
+    #         self.OrderID = OrderID
+    #         self.CustomerID = CustomerID
+    #         self.OrderDate = OrderDate
+    #         self.TotalAmount = TotalAmount
+
+    def CalculateTotalAmount(self, to_cal_total):
+        cursor.execute(
+            """
+                    select sum(totalamount) from orders
+                    where orderid= ?
+                       """,
+            (to_cal_total),
+        )
+        return cursor.fetchall()
+
+    def GetOrderDetails(self, getu):
+        cursor.execute(
+            """
+                        SELECT Orders.OrderID, Orders.OrderDate, Products.ProductName, Products.Description, OrderDetails.Quantity
+                        FROM Orders
+                        INNER JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
+                        INNER JOIN Products ON OrderDetails.ProductID = Products.ProductID
+                        WHERE Orders.OrderID = ?
+
+                       """,
+            (getu),
+        )
+        return cursor.fetchall()
+
+    def UpdateOrderStatus(self, status, idu):
+        cursor.execute(
+            """
+                        update orders
+                        set status = '?'
+                        where OrderID=?;
+                       """(
+                status, idu
+            ),
+        )
         conn.commit()
 
-
-class Orders:
-    def __init__(self, OrderID, CustomerID, OrderDate, TotalAmount):
-        self.OrderID = OrderID
-        self.CustomerID = CustomerID
-        self.OrderDate = OrderDate
-        self.TotalAmount = TotalAmount
-
-    def CalculateTotalAmount():
+    def CancelOrder():  # has some sql error
         pass
 
-    def GetOrderDetails():
-        pass
 
-    def UpdateOrderStatus():
-        pass
+class OrderDetailService:
+    # def __init__(self, OrderDetailID, OrderID, ProductID, Quantity):
+    #     self.OrderDetailID = OrderDetailID
+    #     self.OrderID = OrderID
+    #     self.ProductID = ProductID
+    #     self.Quantity = Quantity
 
-    def CancelOrder():
-        pass
+    def CalculateSubtotal(self, ordid):
+        cursor.execute(
+            """
+                        select quantity*price from OrderDetails
+                        left join Products on
+                        OrderDetails.ProductID=Products.ProductID
+                        where orderid=?
+                        """,
+            (ordid),
+        )
+        return cursor.fetchall()
 
-    class OrderDetails:
-        def __init__(self, OrderDetailID, OrderID, ProductID, Quantity):
-            self.OrderDetailID = OrderDetailID
-            self.OrderID = OrderID
-            self.ProductID = ProductID
-            self.Quantity = Quantity
+    def GetOrderDetailInfo(self, orduid):
+        cursor.execute(
+            """
+                        select * from OrderDetails
+                        right join orders on
+                        OrderDetails.OrderID=Orders.OrderID
+                        where orderdetails.orderid=?
+                       """,
+            (orduid),
+        )
+        return cursor.fetchall()
 
-        def CalculateSubTotal():
-            pass
+    def UpdateQuantity(self, quan, orddid):
+        cursor.execute(
+            """
+                    update OrderDetails
+                    set quantity = ?
+                    where OrderDetailID=?
+                       """,
+            (quan, orddid),
+        )
+        conn.commit()
 
-        def GetOrderDetailInfo():
-            pass
-
-        def UpdateQuantity():
-            pass
-
-        def AddDiscount():
-            pass
+    def AddDiscount(self, ordeid):
+        cursor.execute(
+            """
+                        select (totalamount-100) from OrderDetails
+                        left join orders on
+                        OrderDetails.orderid=orders.orderid
+                        where OrderDetailid=?;
+                       """,
+            (ordeid),
+        )
+        return cursor.fetchall()
 
 
 class Inventory:
