@@ -80,6 +80,14 @@ def customer_menu():
             break
 
 
+class Products:
+    def __init__(self, ProductID, ProductName, Description, Price) -> None:
+        self.ProductID = ProductID
+        self.ProductName = ProductName
+        self.Description = Description
+        self.Price = Price
+
+
 def product_menu():
     product_service = ProductService()
     while True:
@@ -115,6 +123,14 @@ def product_menu():
             break
 
 
+class Orders:
+    def __init__(self, OrderID, CustomerID, OrderDate, TotalAmount):
+        self.OrderID = OrderID
+        self.CustomerID = CustomerID
+        self.OrderDate = OrderDate
+        self.TotalAmount = TotalAmount
+
+
 def order_menu():
     order_service = OrderService()
     while True:
@@ -130,13 +146,11 @@ def order_menu():
         )
         choice = int(input("enter a choice: "))
         if choice == 1:
-            to_cal_total = int(
-                input("enter the customer id to calculate total amount: ")
-            )
+            to_cal_total = int(input("enter the order id to calculate total amount: "))
             totu = order_service.CalculateTotalAmount(to_cal_total)
             print("the total amount for the given orderid is: ", totu)
         elif choice == 2:
-            get_details = int(input("enter cust id to get total details: "))
+            get_details = int(input("enter order id to get total details: "))
             getu = order_service.GetOrderDetails(get_details)
             print("the total order details is: ", getu)
         elif choice == 3:  # error
@@ -151,6 +165,14 @@ def order_menu():
             pass
         elif choice == 5:
             break
+
+
+class OrderDetails:
+    def __init__(self, OrderDetailID, OrderID, ProductID, Quantity):
+        self.OrderDetailID = OrderDetailID
+        self.orderID = OrderID
+        self.ProductID = ProductID
+        self.Quantity = Quantity
 
 
 def order_detail_menu():
@@ -185,6 +207,14 @@ def order_detail_menu():
             print("the amt affter discount is : ", disc_amt)
         elif choice == 5:
             break
+
+
+class Inventory:
+    def __init__(self, InventoryID, ProductID, QuantityInStock, LastStockUpdate):
+        self.InventoryID = InventoryID
+        self.ProductID = ProductID
+        self.QuantityInStock = QuantityInStock
+        self.LastStockUpdate = LastStockUpdate
 
 
 def inventory_menu():
