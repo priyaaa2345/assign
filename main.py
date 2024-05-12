@@ -151,8 +151,11 @@ def order_menu():
             print("the total amount for the given orderid is: ", totu)
         elif choice == 2:
             get_details = int(input("enter order id to get total details: "))
-            getu = order_service.GetOrderDetails(get_details)
-            print("the total order details is: ", getu)
+            if order_service.detail_check:  # exception not throwing properly
+                getu = order_service.GetOrderDetails(get_details)
+                print("the  order details is: ", getu)
+            else:
+                print("give the correct details")
         elif choice == 3:  # error
             status = input(
                 "enter the status that you want to update(Processing/Shipped): "
@@ -253,8 +256,11 @@ def inventory_menu():
         elif choice == 4:
             quant = int(input("enter a quantity to remove from inventory: "))
             proid = int(input("enter the productid to remove quantity from: "))
-            inventory_service.RemoveFromInventory(quant, proid)
-            print("Removed successfully..")
+            if inventory_service.quantity_in_inventory(quant, proid):
+                inventory_service.RemoveFromInventory(quant, proid)
+                print("Removed successfully..")
+            else:
+                print("insufficent Quantity in inventory ")
         elif choice == 5:
             new_val = int(input("enter a new value to update: "))
             pro_id = int(input("enter the product id: "))
@@ -383,6 +389,21 @@ class OrderService:
         result = cursor.fetchone()
         return result[0] if result else 0
 
+    def detail_check(self, getu):
+        try:
+            if getu in cursor.execute(
+                """
+                       select orderid from orders
+                       where orderid=?
+                       """,
+                (getu),
+            ):
+                return True
+        except Exception as e:
+            print("InComplete Order Exception")
+            print("Theres no such orderid")
+            return False
+
     def GetOrderDetails(self, getu):
         cursor.execute(
             """
@@ -476,6 +497,28 @@ class InventoryService:
     #     self.ProductID = ProductID
     #     self.QuantityInStock = QuantityInStock
     #     self.LastStockUpdate = LastStockUpdate
+
+    def quantity_in_inventory(self, quant, proid):
+        try:
+            cursor.execute(
+                """
+                                select quantity_in_stock from inventory
+                                where productID=?
+                           """,
+                (proid),
+            )
+            quantity_in_stock = cursor.fetchone()[0]
+            return quant <= quantity_in_stock
+        #     else:
+        #         raise InSufficientStockException( # type: ignore
+        #             "Insufficient Stock to proceed the order "
+        #         )
+
+        except Exception as e:
+            print("The quantity u have mentioned is not available in the inventory")
+            return False
+        # result=cursor.fetchone()
+        # return result[0] if result else 0
 
     def GetProduct(self, inv_id):
         cursor.execute(
