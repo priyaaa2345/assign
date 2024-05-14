@@ -48,7 +48,8 @@ class MainMenu:
                                 2.Calculate Total orders
                                 3. View specific customer 
                                 4. Update details
-                                5.Back to main menu
+                                5.inv acccess
+                                6.Back to main menu
                                 """
             )
             choice = int(input("enter a choice: "))
@@ -64,10 +65,9 @@ class MainMenu:
 
             elif choice == 3:
                 FirstName = input("enter the name of the customer to display: ")
-                if self.customer_service.cust_data_check(FirstName):
-                    details = self.customer_service.GetCustomerDetails(FirstName)
-                    for detail in details:
-                        print(detail)
+                details = self.customer_service.GetCustomerDetails(FirstName)
+                for detail in details:
+                    print(detail)
 
             elif choice == 4:
                 updation = int(input("enter the data u want to update: "))
@@ -77,8 +77,12 @@ class MainMenu:
                 # updat = updation.UpdateCustomerInfo()
 
                 print("updated successfully")
-
             elif choice == 5:
+                inv_id = int(input("enter the id : "))
+                self.customer_service.invent_access(inv_id)
+                print("No unauthorized ppl should enter..")
+
+            elif choice == 6:
                 break
 
     def product_menu(self):
@@ -88,6 +92,7 @@ class MainMenu:
                     1. Product details
                     2. Update product details
                     3. Check stock details
+                    5. add 
                     4. Back to main menu
                 """
             )
@@ -107,7 +112,7 @@ class MainMenu:
                 print("everything is updated successfully")
             elif choice == 3:
                 stock_search_with_id = int(
-                    input("enter the product id to check if it is stock: ")
+                    input("enter the product id to check if it is in stock: ")
                 )
                 stock = self.product_service.IsProductInStock(stock_search_with_id)
                 print(" ", stock)
@@ -148,8 +153,11 @@ class MainMenu:
                 self.order_service.UpdateOrderStatus(status, idu)
                 print("updated successfully")
 
-            elif choice == 4:  # no code
-                pass
+            elif choice == 4:
+                order_id = int(input("enter the order id to delete: "))
+                ord_id = int(input("enter the id again: "))
+                self.order_service.CancelOrder(order_id, ord_id)
+                print("removed!!")
             elif choice == 5:
                 break
 
@@ -175,7 +183,7 @@ class MainMenu:
                 print("the details are: ", detail)
             elif choice == 3:
                 quan = int(input("enter the quantity to update: "))
-                orddid = int(input("enter the ord detail id to update: "))
+                orddid = int(input("enter the prd  id to update: "))
                 self.order_detail_service.UpdateQuantity(quan, orddid)
                 print("updated successfully!! ")
             elif choice == 4:

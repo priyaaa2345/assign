@@ -1,4 +1,5 @@
 from util.DBConn import DBConnection
+from exception.Exceptions import InsufficientStockException
 
 
 class InventoryService(DBConnection):
@@ -70,30 +71,46 @@ class InventoryService(DBConnection):
         except Exception as e:
             print(e)
 
-    def RemoveFromInventory(self, quant, proid):
+    # def RemoveFromInventory(self, quant, proid):
+    #         try:
+    #             self.cursor.execute(
+    #             """
+    #                     update Inventory
+    #                     set QuantityInStock=QuantityInStock-?
+    #                     where ProductID=?
+    #                     """,
+    #             (quant, proid),
+    #         )
+    #         if quant<0:
+    #             raise InsufficientStockException()
+
+    #         finally:
+    #             self.conn.commit()
+
+    #     # except Exception as e:
+    #     print(e)
+
+    def UpdateStockQuantity(self, new_val, pro_id):
         try:
             self.cursor.execute(
                 """
                         update Inventory
-                        set QuantityInStock=QuantityInStock-?
-                        where ProductID=?
-                        """,
-                (quant, proid),
-            )
-            self.conn.commit()
-
-        except Exception as e:
-            print(e)
-
-    def UpdateStockQuantity(self, new_val, pro_id):
-        self.cursor.execute(
-            """
-                        update Inventory
                         set QuantityInStock=?
                         where ProductID=?;
                        """,
-            (new_val, pro_id),
-        )
+                (new_val, pro_id),
+            )
+            self.cursor.execute(
+                "select QuantityInStock from Inventory where productID=?", (pro_id)
+            )
+            row = self.cursor.fetchone()
+            if row:
+                curr_val = row[0]
+            if new_val > curr_val:
+                raise InsufficientStockException()
+        except Exception as e:
+            print(e)
+
         self.conn.commit()
 
     def IsProductAvailable(self, proddid):
@@ -142,7 +159,7 @@ class InventoryService(DBConnection):
     def ListAllProducts(self):
         self.cursor.execute(
             """
-                       select productid,quantityinstock from Inventory;
+                       select * from Inventory;
                        """
         )
         return self.cursor.fetchall()

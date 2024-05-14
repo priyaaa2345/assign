@@ -1,4 +1,5 @@
 from util.DBConn import DBConnection
+from exception.Exceptions import InvalidDataException, AuthenticationException
 
 
 class CustomerService(DBConnection):
@@ -38,24 +39,12 @@ class CustomerService(DBConnection):
             self.cursor.execute(
                 "select * from customers where FirstName like ? ", (FirstName)
             )
-            return self.cursor.fetchall()
-        except Exception as e:
+            result = self.cursor.fetchall()
+            if not result:
+                raise InvalidDataException()
+        except InvalidDataException as e:
             print(e)
-
-    def cust_data_check(self, FirstName):
-        try:
-            self.cursor.execute(
-                "select * from customers where FirstName like ? ", (FirstName)
-            )
-            rows = self.cursor.fetchall()
-            if not rows:
-                raise Exception("No customer found with the given name.")
-
-            return True
-
-        except Exception as e:
-            print("Invalid DataException: Invalid credentials..")
-            return False
+        return result
 
     def UpdateCustomerInfo(self, updation, CustomerId):
         try:
@@ -69,3 +58,19 @@ class CustomerService(DBConnection):
             print(e)
 
         # for getters and setters:
+
+    # inventory id access
+    def invent_access(self, inv_id):
+        try:
+            result = self.cursor.execute(
+                """
+                            select orderid from Customers
+                            right join orders on
+                            Customers.orderID=orders.orderID
+                            where OrderID=?""",
+                (inv_id),
+            )
+            if not result:
+                raise AuthenticationException()
+        except Exception as e:
+            print(e)

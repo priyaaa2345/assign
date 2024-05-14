@@ -1,4 +1,5 @@
 from util.DBConn import DBConnection
+from exception.Exceptions import PaymentException
 
 
 class OrderService(DBConnection):
@@ -7,15 +8,22 @@ class OrderService(DBConnection):
     #     self.cursor = conn.cursor()
 
     def CalculateTotalAmount(self, to_cal_total):
-        self.cursor.execute(
-            """
+        try:
+            self.cursor.execute(
+                """
                     select sum(totalamount) from orders
                     where orderid= ?
                        """,
-            (to_cal_total),
-        )
-        result = self.cursor.fetchone()
-        return result[0] if result else 0
+                (to_cal_total),
+            )
+            result = self.cursor.fetchone()
+            if result[0] is None:
+                raise PaymentException()
+            return result[0]
+        except Exception as e:
+            print(e)
+
+        # return result[0] if result else 0
 
     def detail_check(self, getu):
         try:
@@ -58,13 +66,14 @@ class OrderService(DBConnection):
         )
         self.conn.commit()
 
-    def CancelOrder(self):  # has some sql error
+    def CancelOrder(self, order_id, ord_id):
         try:
             self.cursor.execute(
                 """
+            delete from OrderDetails where orderid=?;
             delete from Orders where orderid=?
                                         """,
-                (),
+                (order_id, ord_id),
             )
             self.conn.commit()
 

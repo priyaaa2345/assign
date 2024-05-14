@@ -1,4 +1,5 @@
 from util.DBConn import DBConnection
+from exception.Exceptions import IncompleteOrderException
 
 
 class OrderDetailService(DBConnection):
@@ -43,10 +44,14 @@ class OrderDetailService(DBConnection):
                 """
                     update OrderDetails
                     set quantity = ?
-                    where OrderDetailID=?
+                    where ProductID=?
                         """,
                 (quan, orddid),
             )
+            result = self.cursor.fetchone()
+            if not result:
+                raise IncompleteOrderException()
+
             self.conn.commit()
         except Exception as e:
             print(e)
