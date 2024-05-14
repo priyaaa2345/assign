@@ -1,7 +1,10 @@
-class ProductService:
-    def __init__(self, conn):
-        self.conn = conn
-        self.cursor = conn.cursor()
+from util.DBConn import DBConnection
+
+
+class ProductService(DBConnection):
+    # def __init__(self, conn):
+    #     self.conn = conn
+    #     self.cursor = conn.cursor()
 
     def GetProductDetails(self, search_with_id):
         try:

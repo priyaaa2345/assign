@@ -1,7 +1,10 @@
-class CustomerService:
-    def __init__(self, conn):
-        self.conn = conn
-        self.cursor = conn.cursor()
+from util.DBConn import DBConnection
+
+
+class CustomerService(DBConnection):
+    # def __init__(self, conn):
+    #     self.conn = conn
+    #     self.cursor = conn.cursor()
 
     def read_customers(self):
         try:

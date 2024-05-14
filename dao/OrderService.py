@@ -1,7 +1,10 @@
-class OrderService:
-    def __init__(self, conn):
-        self.conn = conn
-        self.cursor = conn.cursor()
+from util.DBConn import DBConnection
+
+
+class OrderService(DBConnection):
+    # def __init__(self, conn):
+    #     self.conn = conn
+    #     self.cursor = conn.cursor()
 
     def CalculateTotalAmount(self, to_cal_total):
         self.cursor.execute(

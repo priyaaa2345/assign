@@ -1,4 +1,7 @@
-class InventoryService:
+from util.DBConn import DBConnection
+
+
+class InventoryService(DBConnection):
 
     def quantity_in_inventory(self, quant, proid):
         try:
