@@ -28,12 +28,36 @@ print("Welcome to TECHSHOP 📲🎧⚡")
 # • Implement methods as specified
 class Customer:
     def __init__(self, CustomerId, FirstName, LastName, Email, Phone, Address):
-        self.CustomerId = CustomerId
-        self.FirstName = FirstName
+        self.__CustomerId = CustomerId
+        self.__FirstName = FirstName
         self.LastName = LastName
         self.Email = Email
-        self.Phone = Phone
-        self.Address = Address
+        self.__Phone = Phone
+        self.__Address = Address
+
+    def get_customerid(self):
+        return self.__CustomerId
+
+    def set_customerid(self, CustomerId):
+        self.__CustomerId = CustomerId
+
+    def get_firstname(self):
+        return self.__FirstName
+
+    def set_firstname(self, FirstName):
+        self.__FirstName = FirstName
+
+    def get_phone(self):
+        return self.__Phone
+
+    def set_phone(self, Phone):
+        self.__Phone = Phone
+
+    def get_address(self):
+        return self.__Address
+
+    def set_address(self, Address):
+        self.__Address = Address
 
 
 def customer_menu():
@@ -59,13 +83,13 @@ def customer_menu():
             # customer = Customer(CustomerId, None, None, None, None, None)
             # total_orders = customer.CalculateTotalOrders()
             print("the total order for the given customer is : ", total)
+
         elif choice == 3:
             FirstName = input("enter the name of the customer to display: ")
-            # cust = Customer(None, FirstName, None, None, None, None)
-            # cust = Customer(FirstName)
-            details = customer_service.GetCustomerDetails(FirstName)
-            for detail in details:
-                print(detail)
+            if customer_service.cust_data_check(FirstName):
+                details = customer_service.GetCustomerDetails(FirstName)
+                for detail in details:
+                    print(detail)
 
         elif choice == 4:
             updation = int(input("enter the data u want to update: "))
@@ -81,11 +105,23 @@ def customer_menu():
 
 
 class Products:
-    def __init__(self, ProductID, ProductName, Description, Price) -> None:
-        self.ProductID = ProductID
+    def __init__(self, ProductID, ProductName, Description, Price):
+        self.__ProductID = ProductID
         self.ProductName = ProductName
         self.Description = Description
-        self.Price = Price
+        self.__Price = Price
+
+    def set_productid(self, ProductID):
+        self.__ProductID = ProductID
+
+    def get_productid(self):
+        return self.__ProductID
+
+    def get_price(self):
+        return self.__Price
+
+    def set_price(self, Price):
+        self.__Price = Price
 
 
 def product_menu():
@@ -125,10 +161,34 @@ def product_menu():
 
 class Orders:
     def __init__(self, OrderID, CustomerID, OrderDate, TotalAmount):
-        self.OrderID = OrderID
-        self.CustomerID = CustomerID
-        self.OrderDate = OrderDate
-        self.TotalAmount = TotalAmount
+        self.__OrderID = OrderID
+        self.__CustomerID = CustomerID
+        self.__OrderDate = OrderDate
+        self.__TotalAmount = TotalAmount
+
+    def get_orderid(self):
+        return self.__OrderID
+
+    def set_orderid(self, OrderID):
+        self.__OrderID = OrderID
+
+    def get_customerid(self):
+        return self.__CustomerID
+
+    def set_customerid(self, CustomerID):
+        self.__CustomerID = CustomerID
+
+    def get_orderdate(self):
+        return self.__OrderDate
+
+    def set_OrderDate(self, OrderDate):
+        self.__OrderDate = OrderDate
+
+    def get_TotalAmount(self):
+        return self.__TotalAmount
+
+    def set_totalamount(self, TotalAmount):
+        self.__TotalAmount = TotalAmount
 
 
 def order_menu():
@@ -172,10 +232,34 @@ def order_menu():
 
 class OrderDetails:
     def __init__(self, OrderDetailID, OrderID, ProductID, Quantity):
-        self.OrderDetailID = OrderDetailID
-        self.orderID = OrderID
-        self.ProductID = ProductID
-        self.Quantity = Quantity
+        self.__OrderDetailID = OrderDetailID
+        self.__OrderID = OrderID
+        self.__ProductID = ProductID
+        self.__Quantity = Quantity
+
+    def get_orderid(self):
+        return self.__OrderID
+
+    def set_orderid(self, OrderID):
+        self.__OrderID = OrderID
+
+    def set_productid(self, ProductID):
+        self.__ProductID = ProductID
+
+    def get_productid(self):
+        return self.__ProductID
+
+    def set_quantity(self, Quantity):
+        self.__Quantity = Quantity
+
+    def get_quantity(self):
+        return self.__Quantity
+
+    def get_orderdetailid(self):
+        return self.__OrderDetailID
+
+    def set_orderdetailid(self, OrderDetailID):
+        self.__OrderDetailID = OrderDetailID
 
 
 def order_detail_menu():
@@ -214,10 +298,22 @@ def order_detail_menu():
 
 class Inventory:
     def __init__(self, InventoryID, ProductID, QuantityInStock, LastStockUpdate):
-        self.InventoryID = InventoryID
-        self.ProductID = ProductID
+        self.__InventoryID = InventoryID
+        self.__ProductID = ProductID
         self.QuantityInStock = QuantityInStock
         self.LastStockUpdate = LastStockUpdate
+
+    def get_inventoryid(self):
+        return self.__InventoryID
+
+    def set_inventoryid(self, InventoryID):
+        self.__InventoryID = InventoryID
+
+    def get_ProductID(self):
+        return self.__ProductID
+
+    def set_ProductID(self, ProductID):
+        self.__ProductID = ProductID
 
 
 def inventory_menu():
@@ -317,8 +413,22 @@ class CustomerService:
 
     def GetCustomerDetails(self, FirstName):
         cursor.execute("select * from customers where FirstName like ? ", (FirstName))
-        # conn.commit()
         return cursor.fetchall()
+
+    def cust_data_check(self, FirstName):
+        try:
+            cursor.execute(
+                "select * from customers where FirstName like ? ", (FirstName)
+            )
+            rows = cursor.fetchall()
+            if not rows:
+                raise Exception("No customer found with the given name.")
+
+            return True
+
+        except Exception as e:
+            print("Invalid DataException: Invalid credentials..")
+            return False
 
     def UpdateCustomerInfo(self, updation, CustomerId):
         cursor.execute(
@@ -326,6 +436,8 @@ class CustomerService:
             (updation, CustomerId),
         )
         conn.commit()
+
+        # for getters and setters:
 
 
 class ProductService:
@@ -492,11 +604,6 @@ class OrderDetailService:
 
 
 class InventoryService:
-    # def __init__(self, InventoryID, ProductID, QuantityInStock, LastStockUpdate):
-    #     self.InventoryID = InventoryID
-    #     self.ProductID = ProductID
-    #     self.QuantityInStock = QuantityInStock
-    #     self.LastStockUpdate = LastStockUpdate
 
     def quantity_in_inventory(self, quant, proid):
         try:
