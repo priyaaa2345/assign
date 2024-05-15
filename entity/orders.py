@@ -1,9 +1,10 @@
 class Orders:
-    def __init__(self, OrderID, CustomerID, OrderDate, TotalAmount):
+    def __init__(self, OrderID, CustomerID, OrderDate, TotalAmount, customer):
         self.__OrderID = OrderID
         self.__CustomerID = CustomerID
         self.__OrderDate = OrderDate
         self.__TotalAmount = TotalAmount
+        self.__customer = customer
 
     def get_orderid(self):
         return self.__OrderID
@@ -28,3 +29,16 @@ class Orders:
 
     def set_totalamount(self, TotalAmount):
         self.__TotalAmount = TotalAmount
+
+    def set_sort_orders_by_date(self, OrderDate):
+        self.__OrderDate = OrderDate
+
+    # task 4 composition
+    # creating a private obj from custmers clas
+    def get_customer(self):
+        self.__customer
+
+
+# example usage
+# Creating an order object with composition relationship
+# order = Orders("O001", customer.customer_id, "2024-05-15", 100.0, customer)

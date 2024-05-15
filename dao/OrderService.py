@@ -79,3 +79,15 @@ class OrderService(DBConnection):
 
         except Exception as e:
             print(e)
+
+
+# task 6 : collections
+
+
+def sort_orders_by_date(self) -> list:
+    try:
+        orders = self.cursor.execute("select orderdate from orders")
+        output = [sorted(orders, key=lambda order: order.date)]
+        return output
+    except Exception as e:
+        print(e)

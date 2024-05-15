@@ -15,4 +15,7 @@ class Products:
         return self.__Price
 
     def set_price(self, Price):
-        self.__Price = Price
+        if Price >= 0:
+            self.__Price = Price
+        else:
+            raise ValueError("Price must be non-negative")

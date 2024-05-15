@@ -86,3 +86,7 @@ class ProductsList:
     #         return True
     #     else:
     #         return False
+
+    #  TASK ^ :COLLECTIONS
+    def manage_product(self) -> list:
+        pass

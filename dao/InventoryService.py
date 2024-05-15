@@ -163,3 +163,14 @@ class InventoryService(DBConnection):
                        """
         )
         return self.cursor.fetchall()
+
+    # task collection:
+
+    def sort_inventory(self) -> list:
+        try:
+            inventory = self.cursor.execute("select InventoryID from Inventory")
+            output = [sorted(inventory, key=lambda i: i.InventoryID)]
+            return output
+
+        except Exception as e:
+            print(e)

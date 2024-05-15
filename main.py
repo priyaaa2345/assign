@@ -6,6 +6,8 @@ from dao import (
     OrderDetailService,
     InventoryService,
 )
+from tabulate import tabulate  # for tabulation in collections
+
 
 # from entity.customer import Customer
 # from dao.CustomerService import CustomerService
@@ -269,6 +271,32 @@ class MainMenu:
                 print("the inventory list are: ", all_products)
             elif choice == 11:
                 break
+
+    # for collections
+    @staticmethod
+    def sort_orders_by_date(Orders):
+        try:
+            ordered_date = Orders.sort_orders_by_date()
+            if ordered_date:
+                headers = ["OrderDate"]
+                print(tabulate(ordered_date, headers=headers, tablefmt="grid"))
+            else:
+                print("No dates are there to sort")
+
+        except Exception as e:
+            print(e)
+
+    @staticmethod
+    def sort_inventory(self, InventoryID):
+        try:
+            ordered_inventory = Inventory.sort_inventory()
+            if ordered_inventory:
+                headers = ["InventoryID"]
+                print(tabulate(ordered_inventory, headers=headers, tablefmt="grid"))
+            else:
+                print("There is no data to sort")
+        except Exception as e:
+            print(e)
 
 
 def main():

@@ -57,8 +57,6 @@ class CustomerService(DBConnection):
         except Exception as e:
             print(e)
 
-        # for getters and setters:
-
     # inventory id access
     def invent_access(self, inv_id):
         try:
