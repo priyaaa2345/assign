@@ -1,22 +1,10 @@
 import pyodbc
-
-server_name = "MSI\SQLEXPRESS"
-database_name = "TechShop"
-
-
-conn_str = (
-    f"Driver={{SQL Server}};"
-    f"Server={server_name};"
-    f"Database={database_name};"
-    f"Trusted_Connection=yes;"
-)
-
-
-print(conn_str)
+from util.DBPropertyUtil import PropertyUtil
 
 
 class DBConnection:
     def __init__(self):  # for cursor instance
+        conn_str = PropertyUtil.get_property_String()
         self.conn = pyodbc.connect(
             conn_str
         )  # if obj is created there will be new connection
