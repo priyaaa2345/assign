@@ -1,4 +1,5 @@
 from util.DBConn import DBConnection
+from tabulate import tabulate  # for tabulation in collections
 
 # from entity.products import Product
 
@@ -15,7 +16,7 @@ class ProductService(DBConnection):
                         select * from Products
                         where ProductID=?
                        """,
-                (search_with_id),
+                (search_with_id,),
             )
             return self.cursor.fetchall()
         except Exception as e:
@@ -27,7 +28,7 @@ class ProductService(DBConnection):
             self.cursor.execute(
                 """                                   
                             update Products
-                            set Price=?
+                            set Price=?,
                             description=?
                             where ProductID=?
                             """,
@@ -46,17 +47,22 @@ class ProductService(DBConnection):
                         Products.ProductID=Inventory.ProductID
                         where QuantityInStock>0 and Inventory.ProductID=?
                        """,
-                (stock_search_with_id),
+                (stock_search_with_id,),
             )
             return self.cursor.fetchall()
         except Exception as e:
             print(e)
 
+    # task 6 collections::::
     def ViewAll(self):
         try:
             self.cursor.execute("select * from Products")
-            for row in self.cursor:
-                print(row)
+            rows = self.cursor.fetchall()
+            if rows:
+                headers = [desc[0] for desc in self.cursor.description]
+                print(tabulate(rows, headers=headers, tablefmt="grid"))
+            else:
+                print("No products found.")
         except Exception as e:
             print(e)
 
@@ -68,9 +74,9 @@ class ProductService(DBConnection):
         self.conn.commit()
 
     def DeleteById(self, prod_id):
-        self.cursor.execute("delete from Inventory where ProductID=?", (prod_id))
-        self.cursor.execute("delete from OrderDetails where ProductID=?", (prod_id))
-        self.cursor.execute("delete from Products where ProductID=?", (prod_id))
+        self.cursor.execute("delete from Inventory where ProductID=?", (prod_id,))
+        self.cursor.execute("delete from OrderDetails where ProductID=?", (prod_id,))
+        self.cursor.execute("delete from Products where ProductID=?", (prod_id,))
         self.conn.commit()
 
 
@@ -97,7 +103,7 @@ class ProductsList:
         for product in self.products:
             if product.product_id == product_id:
                 if self.has_existing_orders(product_id):
-                    raise ValueError("You cant remove a product with existing orders")
+                    raise ValueError("You can't remove a product with existing orders")
                 self.products.remove(product)
                 return
         raise ValueError("Product not found")

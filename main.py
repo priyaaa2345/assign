@@ -189,7 +189,9 @@ class MainMenu:
                 print("the total amount for the given orderid is: ", totu)
             elif choice == 2:
                 get_details = int(input("enter order id to get total details: "))
-                if self.order_service.detail_check:  # exception not throwing properly
+                if self.order_service.detail_check(
+                    get_details
+                ):  # exception not throwing properly
                     getu = self.order_service.GetOrderDetails(get_details)
                     print("the  order details is: ", getu)
                 else:
