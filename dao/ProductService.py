@@ -52,6 +52,27 @@ class ProductService(DBConnection):
         except Exception as e:
             print(e)
 
+    def ViewAll(self):
+        try:
+            self.cursor.execute("select * from Products")
+            for row in self.cursor:
+                print(row)
+        except Exception as e:
+            print(e)
+
+    def CreateNewProduct(self, product_id, product_name, desc, price, category):
+        self.cursor.execute(
+            "insert into Products values(?,?,?,?,?)",
+            (product_id, product_name, desc, price, category),
+        )
+        self.conn.commit()
+
+    def DeleteById(self, prod_id):
+        self.cursor.execute("delete from Inventory where ProductID=?", (prod_id))
+        self.cursor.execute("delete from OrderDetails where ProductID=?", (prod_id))
+        self.cursor.execute("delete from Products where ProductID=?", (prod_id))
+        self.conn.commit()
+
 
 class ProductsList:
     def __init__(self):

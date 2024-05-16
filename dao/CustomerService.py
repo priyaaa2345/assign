@@ -72,3 +72,27 @@ class CustomerService(DBConnection):
                 raise AuthenticationException()
         except Exception as e:
             print(e)
+
+    def Create_new_Customer(
+        self, new_cust_id, first_name, last_name, mail, phone, addr
+    ):
+        try:
+            self.cursor.execute(
+                """
+insert into Customers values(?,?,?,?,?,?)
+                            """,
+                (new_cust_id, first_name, last_name, mail, phone, addr),
+            )
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
+    def Delete_by_id(self, cust_id):
+        try:
+            self.cursor.execute(""" delete from orders where CustomerID=?""", (cust_id))
+            self.cursor.execute(
+                """ delete from Customers where CustomerID=?""", (cust_id)
+            )
+            self.conn.commit()
+        except Exception as e:
+            print(e)

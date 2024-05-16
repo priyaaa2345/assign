@@ -51,7 +51,9 @@ class MainMenu:
                                 3. View specific customer 
                                 4. Update details
                                 5.inv acccess
-                                6.Back to main menu
+                                6. create new customer
+                                7. Delete customer
+                                8.Back to main menu
                                 """
             )
             choice = int(input("enter a choice: "))
@@ -85,6 +87,23 @@ class MainMenu:
                 print("No unauthorized ppl should enter..")
 
             elif choice == 6:
+                new_cust_id = int(input("enter the new customer id: "))
+                first_name = input("enter the first name for the customers: ")
+                last_name = input("enter the last name for the customers: ")
+                mail = input("enter your mail id: ")
+                phone = int(input("pls enter your ph num: "))
+                addr = input("enter your current address: ")
+                self.customer_service.Create_new_Customer(
+                    new_cust_id, first_name, last_name, mail, phone, addr
+                )
+                print("Congrats..A new customer registered")
+
+            elif choice == 7:
+                cust_id = int(input("Enter the cust idd to delete permanently: "))
+                self.customer_service.Delete_by_id(cust_id)
+                print("Deleted permanently")
+
+            elif choice == 8:
                 break
 
     def product_menu(self):
@@ -94,8 +113,10 @@ class MainMenu:
                     1. Product details
                     2. Update product details
                     3. Check stock details
-                    5. add 
-                    4. Back to main menu
+                    4. View all
+                    5. Add a product
+                    6. Delete a product 
+                    7. Back to main menu
                 """
             )
             choice = int(input("enter a choice"))
@@ -118,7 +139,30 @@ class MainMenu:
                 )
                 stock = self.product_service.IsProductInStock(stock_search_with_id)
                 print(" ", stock)
+
             elif choice == 4:
+                everything = self.product_service.ViewAll()
+                print("The products available are: ", everything)
+
+            elif choice == 5:
+                product_id = int(input("enter the product id to insert: "))
+                product_name = input("enter the product name to insert: ")
+                desc = input("enter the valid description for the product")
+                price = int(input("enter the price of the product: "))
+                category = input(
+                    "enter the category(Electronic Gadget/not an electronice gadget): "
+                )
+                self.product_service.CreateNewProduct(
+                    product_id, product_name, desc, price, category
+                )
+                print("Product created!!!")
+
+            elif choice == 6:
+                prod_id = int(input("enter the product id to delete from the list: "))
+                self.product_service.DeleteById(prod_id)
+                print("deleted successfuly")
+
+            elif choice == 7:
                 break
 
     def order_menu(self):
