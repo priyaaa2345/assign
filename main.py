@@ -1,10 +1,12 @@
 from entity import Customer, Products, Orders, OrderDetails, Inventory
+from entity import Payments
 from dao import (
     CustomerService,
     ProductService,
     OrderService,
     OrderDetailService,
     InventoryService,
+    PaymentService,
 )
 from tabulate import tabulate  # for tabulation in collections
 
@@ -39,6 +41,7 @@ class MainMenu:
     order_service = OrderService()
     order_detail_service = OrderDetailService()
     inventory_service = InventoryService()
+    payment_service = PaymentService()
 
     def customer_menu(self):
 
@@ -316,6 +319,24 @@ class MainMenu:
             elif choice == 11:
                 break
 
+    def payment_menu(self):
+        while True:
+            print(
+                """
+                Enter a choice:
+                  1. Display Status
+                  2. Back to main menu
+                  """
+            )
+            choice = int(input("enter a choice:"))
+            if choice == 1:
+                order_id = int(input("Enter the order id to display status: "))
+                output = self.payment_service.DisplayStatus(order_id)
+                print("Your status is : ", output)
+
+            elif choice == 2:
+                break
+
     # for collections
     @staticmethod
     def sort_orders_by_date(Orders):
@@ -354,7 +375,8 @@ def main():
                               3.Orders data
                               4. Order details 
                               5.Inventory data
-                              6.Exit
+                              6.Payment data
+                              7.Exit
                               """
         )
         choice = int(input("enter your choice "))
@@ -369,6 +391,8 @@ def main():
         elif choice == 5:
             main_menu.inventory_menu()
         elif choice == 6:
+            main_menu.payment_menu()
+        elif choice == 7:
             break
 
 

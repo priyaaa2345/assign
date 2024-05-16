@@ -1,5 +1,6 @@
+from exception.authentication_exception import AuthenticationException
+from exception.invalid_data_exception import InvalidDataException
 from util.DBConn import DBConnection
-from exception.Exceptions import InvalidDataException, AuthenticationException
 
 
 class CustomerService(DBConnection):

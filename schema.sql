@@ -43,3 +43,12 @@ create table Inventory(
    LastStockUpdate date,
    foreign key (ProductID) references products(ProductID)
 );
+
+
+create table Payments(
+payment_id int,
+order_id int,
+amount int,
+status text,
+payment_date date
+);

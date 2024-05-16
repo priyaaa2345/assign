@@ -1,5 +1,5 @@
+from exception.payment_exception import PaymentException
 from util.DBConn import DBConnection
-from exception.Exceptions import PaymentException
 
 
 class OrderService(DBConnection):

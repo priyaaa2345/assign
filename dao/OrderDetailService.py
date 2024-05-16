@@ -1,5 +1,5 @@
+from exception.incomplete_order_exception import IncompleteOrderException
 from util.DBConn import DBConnection
-from exception.Exceptions import IncompleteOrderException
 
 
 class OrderDetailService(DBConnection):

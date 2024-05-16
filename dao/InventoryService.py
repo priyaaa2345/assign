@@ -1,5 +1,5 @@
+from exception.insufficent_stock_exception import InsufficientStockException
 from util.DBConn import DBConnection
-from exception.Exceptions import InsufficientStockException
 
 
 class InventoryService(DBConnection):
