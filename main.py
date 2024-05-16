@@ -218,7 +218,9 @@ class MainMenu:
                     2. Get order detail information
                     3. update quantity
                     4. Adding discount
-                    5. Back to main menu
+                    5. Delete order detail
+                    6. get total details
+                    7. Back to main menu
                 """
             )
             choice = int(input("enter a choice: "))
@@ -239,7 +241,16 @@ class MainMenu:
                 ordeid = int(input("enter the orderdetailid to add discount: "))
                 disc_amt = self.order_detail_service.AddDiscount(ordeid)
                 print("the amt affter discount is : ", disc_amt)
+
             elif choice == 5:
+                orderdetailid = int(input("enter order detail id to delete: "))
+                self.order_detail_service.DeleteById(orderdetailid)
+                print("deleted successfully..")
+
+            elif choice == 6:
+                details = self.order_detail_service.GetDetail()
+                print("the details are..", details)
+            elif choice == 7:
                 break
 
     def inventory_menu(self):

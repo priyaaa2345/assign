@@ -71,3 +71,18 @@ class OrderDetailService(DBConnection):
             return result[0] if result else 0
         except Exception as e:
             print(e)
+
+    def DeleteById(self, orderdetailid):
+        try:
+            self.cursor.execute(
+                "delete from OrderDetails where OrderDetailId= ? ", (orderdetailid)
+            )
+        except Exception as e:
+            print(e)
+
+    def GetDetail(self):
+        try:
+            self.cursor.execute("select * from OrderDetails")
+            return self.cursor.fetchall()
+        except Exception as e:
+            print(e)

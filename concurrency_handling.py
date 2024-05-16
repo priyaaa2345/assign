@@ -7,6 +7,5 @@ class ConcurrencyHandler(DBConnection):
             "select * from Orders where OrderId=?", (order_id)
         )
 
-    def UpdateOrders(self, order_id, new_data):
-
+    def UpdateOrders(self):
         pass
