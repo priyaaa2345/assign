@@ -1,3 +1,4 @@
+from exception.database_exception import DatabaseException
 from exception.payment_exception import PaymentException
 from util.DBConn import DBConnection
 
@@ -41,8 +42,9 @@ class OrderService(DBConnection):
             return False
 
     def GetOrderDetails(self, getu):
-        self.cursor.execute(
-            """
+        try:
+            self.cursor.execute(
+                """
                         SELECT Orders.OrderID, Orders.OrderDate, Products.ProductName, Products.Description, OrderDetails.Quantity
                         FROM Orders
                         INNER JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
@@ -50,9 +52,14 @@ class OrderService(DBConnection):
                         WHERE Orders.OrderID = ?
 
                        """,
-            (getu),
-        )
-        return self.cursor.fetchall()
+                (getu),
+            )
+            result = self.cursor.fetchone()
+            if result:
+                return result[0]
+            raise DatabaseException()
+        except Exception as e:
+            print(e)
 
     def UpdateOrderStatus(self, status, idu):
         self.cursor.execute(

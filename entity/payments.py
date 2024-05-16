@@ -1,3 +1,6 @@
+# created for handling payment processing exception
+
+
 class Payments:
     def __init__(self, payment_id, order_id, amount, status, payment_date):
         self.payment_id = payment_id
