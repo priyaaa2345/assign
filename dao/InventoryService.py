@@ -72,7 +72,7 @@ class InventoryService(DBConnection):
             print(e)
 
     # def RemoveFromInventory(self, quant, proid):
-    #         try:
+    #     try:
     #             self.cursor.execute(
     #             """
     #                     update Inventory
@@ -84,11 +84,11 @@ class InventoryService(DBConnection):
     #         if quant<0:
     #             raise InsufficientStockException()
 
-    #         finally:
+    #     finally:
     #             self.conn.commit()
 
-    #     # except Exception as e:
-    #     print(e)
+    #     except Exception as e:
+    #         print(e)
 
     def UpdateStockQuantity(self, new_val, pro_id):
         try:
