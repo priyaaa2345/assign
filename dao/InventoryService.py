@@ -15,10 +15,6 @@ class InventoryService(DBConnection):
             )
             quantity_in_stock = self.cursor.fetchone()[0]
             return quant <= quantity_in_stock
-        #     else:
-        #         raise InSufficientStockException( # type: ignore
-        #             "Insufficient Stock to proceed the order "
-        #         )
 
         except Exception as e:
             print("The quantity u have mentioned is not available in the inventory")
@@ -71,24 +67,23 @@ class InventoryService(DBConnection):
         except Exception as e:
             print(e)
 
-    # def RemoveFromInventory(self, quant, proid):
-    #     try:
-    #             self.cursor.execute(
-    #             """
-    #                     update Inventory
-    #                     set QuantityInStock=QuantityInStock-?
-    #                     where ProductID=?
-    #                     """,
-    #             (quant, proid),
-    #         )
-    #         if quant<0:
-    #             raise InsufficientStockException()
+    def RemoveFromInventory(self, quant, proid):
+        try:
+            self.cursor.execute(
+                """
+                        update Inventory
+                        set QuantityInStock=QuantityInStock-?
+                        where ProductID=?
+                        """,
+                (quant, proid),
+            )
+            if quant < 0:
+                raise InsufficientStockException()
+        except Exception as e:
+            print(e)
 
-    #     finally:
-    #             self.conn.commit()
-
-    #     except Exception as e:
-    #         print(e)
+        finally:
+            self.conn.commit()
 
     def UpdateStockQuantity(self, new_val, pro_id):
         try:

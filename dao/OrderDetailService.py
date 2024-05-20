@@ -3,9 +3,6 @@ from util.DBConn import DBConnection
 
 
 class OrderDetailService(DBConnection):
-    # def __init__(self, conn):
-    #     self.conn = conn
-    #     self.cursor = conn.cursor()
 
     def CalculateSubtotal(self, ordid):
         try:

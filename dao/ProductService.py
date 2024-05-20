@@ -1,8 +1,6 @@
 from util.DBConn import DBConnection
 from tabulate import tabulate  # for tabulation in collections
 
-# from entity.products import Product
-
 
 class ProductService(DBConnection):
     # def __init__(self, conn):

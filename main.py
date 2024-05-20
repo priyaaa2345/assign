@@ -11,14 +11,6 @@ from dao import (
 from tabulate import tabulate  # for tabulation in collections
 
 
-# from entity.customer import Customer
-# from dao.CustomerService import CustomerService
-# from dao.ProductService import ProductService
-# from dao.OrderService import OrderService
-# from dao.OrderDetailService import OrderDetailService
-# from dao.InventoryService import InventoryService
-
-
 # conn = pyodbc.connect(conn_str)
 # cursor = conn.cursor()
 
@@ -80,8 +72,6 @@ class MainMenu:
                 updation = int(input("enter the data u want to update: "))
                 CustomerId = int(input("enter their customer id: "))
                 self.customer_service.UpdateCustomerInfo(updation, CustomerId)
-                # updation = Customer(custt, None, None, None, None, phone)
-                # updat = updation.UpdateCustomerInfo()
 
                 print("updated successfully")
             elif choice == 5:
@@ -189,9 +179,7 @@ class MainMenu:
                 print("the total amount for the given orderid is: ", totu)
             elif choice == 2:
                 get_details = int(input("enter order id to get total details: "))
-                if self.order_service.detail_check(
-                    get_details
-                ):  # exception not throwing properly
+                if self.order_service.detail_check(get_details):
                     getu = self.order_service.GetOrderDetails(get_details)
                     print("the  order details is: ", getu)
                 else:
